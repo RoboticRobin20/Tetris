@@ -15,8 +15,8 @@ class Block:
         self.locked = False
         
     def draw_block(self):
-        self.block_rect = pygame.Rect(int(self.pos.x * cellsize), int(self.pos.y * cellsize), cellsize, cellsize)
-        pygame.draw.rect(playfield_surface, "red", self.block_rect)
+        self.block_rect = pygame.Rect(int(self.pos.x * main_game.cellsize + main_game.padding / 2), int(self.pos.y * main_game.cellsize + main_game.padding / 2), main_game.cellsize, main_game.cellsize)
+        pygame.draw.rect(main_game.playfield_surface, "red", self.block_rect)
         
     def drop_block(self):
         # block has to go down each cycle
@@ -24,44 +24,51 @@ class Block:
             self.pos.y += 1
         
     def check_landing(self):
-        if self.pos.y == cellnumbers_height - 1:
+        if self.pos.y == main_game.cellnumbers_height - 1:
             self.locked = True
 
 class Main:
     def __init__(self):
         self.block = Block()
+        
+        self.cellsize = 40
+        self.cellnumbers_height = 20
+        self.cellnumbers_width = 10
+        self.padding = 3
+
+        self.background_color = (30, 105, 166)
+        self.playfield_color = "black"
+        self.playfield_surface = pygame.Surface((self.cellnumbers_width * 40 + self.padding, self.cellnumbers_height * 40 + self.padding))
+        self.centered_rect = self.playfield_surface.get_rect(center=screen.get_rect().center)
     
     def update(self):
         self.block.check_landing()
         self.block.drop_block()
     
     def draw_elements(self):
-        screen.fill(background_color)
-        playfield_surface.fill(playfield_color)
+        screen.fill(self.background_color)
+        self.playfield_surface.fill(self.playfield_color)
         self.draw_playfield_grid()
         self.block.draw_block()
-        self.draw_playfield()
+        self.load_playfield()
     
-    def draw_playfield(self):
-        screen.blit(playfield_surface, centered_rect)
+    def load_playfield(self):
+        screen.blit(self.playfield_surface, self.centered_rect)
         
     def draw_playfield_grid(self):
-        print('draw grid')
-        padding = 2
-        for row in range(cellnumbers_height):
-            for col in range(cellnumbers_width):
-                self.grid_rect = pygame.Rect(int(col * cellsize + padding / 2), int(row * cellsize + padding / 2), cellsize - padding, cellsize - padding)
-                pygame.draw.rect(playfield_surface, background_color, self.grid_rect)
+        for row in range(self.cellnumbers_height):
+            for col in range(self.cellnumbers_width):
+                self.grid_rect = pygame.Rect(int(col * self.cellsize + self.padding), int(row * self.cellsize + self.padding), self.cellsize - self.padding, self.cellsize - self.padding)
+                pygame.draw.rect(self.playfield_surface, self.background_color, self.grid_rect)
 
-cellsize = 40
-cellnumbers_height = 20
-cellnumbers_width = 10
+# cellsize = 40
+# cellnumbers_height = 20
+# cellnumbers_width = 10
 
-# background_color = (140, 29, 60)
-background_color = (30, 105, 166)
-playfield_color = "black"
-playfield_surface = pygame.Surface((cellnumbers_width * 40, cellnumbers_height * 40))
-centered_rect = playfield_surface.get_rect(center=screen.get_rect().center)
+# background_color = (30, 105, 166)
+# playfield_color = "black"
+# playfield_surface = pygame.Surface((cellnumbers_width * 40, cellnumbers_height * 40))
+# centered_rect = playfield_surface.get_rect(center=screen.get_rect().center)
   
 main_game = Main()
 

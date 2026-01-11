@@ -18,10 +18,10 @@ class Block:
         self.block_rect = pygame.Rect(int(self.pos.x * main_game.cellsize + main_game.padding / 2), int(self.pos.y * main_game.cellsize + main_game.padding / 2), main_game.cellsize, main_game.cellsize)
         pygame.draw.rect(main_game.playfield_surface, "red", self.block_rect)
         
-    def drop_block(self):
+    def move_block(self, direction):
         # block has to go down each cycle
         if self.locked is False:
-            self.pos.y += 1
+            self.pos += direction
         
     def check_landing(self):
         if self.pos.y == main_game.cellnumbers_height - 1:
@@ -43,7 +43,7 @@ class Main:
     
     def update(self):
         self.block.check_landing()
-        self.block.drop_block()
+        self.block.move_block(pygame.Vector2(0,1))
     
     def draw_elements(self):
         screen.fill(self.background_color)
@@ -73,7 +73,13 @@ class Main:
 main_game = Main()
 
 SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 750)
+
+GRAVITY_MS_NORMAL = 750     # normal gravity
+GRAVITY_MS_SOFT   = 50      # soft drop gravity (fast)
+
+soft_drop = False
+
+pygame.time.set_timer(SCREEN_UPDATE, GRAVITY_MS_NORMAL)
 
 while running:
     
@@ -84,6 +90,22 @@ while running:
             running = False
         if event.type == SCREEN_UPDATE:
             main_game.update()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                if main_game.block.pos.x > 0:
+                    main_game.block.move_block(pygame.Vector2(-1,0))
+            if event.key == pygame.K_RIGHT:
+                if main_game.block.pos.x < 9:
+                    main_game.block.move_block(pygame.Vector2(1,0))
+            if event.key == pygame.K_DOWN and not soft_drop:
+                soft_drop = True
+                pygame.time.set_timer(SCREEN_UPDATE, GRAVITY_MS_SOFT)
+                
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN and soft_drop:
+                soft_drop = False
+                pygame.time.set_timer(SCREEN_UPDATE, GRAVITY_MS_NORMAL)
+
 
     # fill the screen with a color to wipe away anything from last frame
     # playfield_surface.fill(playfield_color)

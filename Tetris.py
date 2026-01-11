@@ -20,8 +20,9 @@ class Block:
             self.grid.update_grid_list(self)
             self.respawn_block()
              
-    def check_landing(self, grid):
-        if self.pos.y == grid.cellnumbers_height - 1:
+    def check_below(self, grid):
+        cell_below = self.pos + pygame.Vector2(0,1)
+        if self.pos.y == grid.cellnumbers_height - 1 or grid.grid_list[int(cell_below.y)][int(cell_below.x)] != '0':
             self.locked = True
             
     def respawn_block(self):
@@ -136,7 +137,7 @@ class Main:
         self.block = Block(self.grid)
         
     def update(self):
-        self.block.check_landing(self.grid)
+        self.block.check_below(self.grid)
         self.block.move_block(pygame.Vector2(0,1))
     
     def draw_elements(self):

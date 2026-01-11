@@ -1,12 +1,5 @@
 import sys, pygame
 
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((1200, 900))
-clock = pygame.time.Clock()
-running = True
-
-
 class Block:
     def __init__(self):
         self.x = 5
@@ -26,6 +19,68 @@ class Block:
     def check_landing(self):
         if self.pos.y == main_game.cellnumbers_height - 1:
             self.locked = True
+
+class Tetromino:
+    def __init__(self):
+        body = []
+
+class Shape:
+    
+    # Shapes: 4 rotation states each (SRS-like pivot at (0,0) for simplicity)
+    PIECES = {
+    'I': [
+        [( -1, 0), ( 0, 0), ( 1, 0), ( 2, 0)],
+        [( 1, -1), ( 1,  0), ( 1, 1), ( 1, 2)],
+        [( -1, 1), ( 0, 1), ( 1, 1), ( 2, 1)],
+        [( 0, -1), ( 0,  0), ( 0, 1), ( 0, 2)]
+    ],
+    'O': [
+        [(0, 0), (1, 0), (0, 1), (1, 1)],
+        [(0, 0), (1, 0), (0, 1), (1, 1)],
+        [(0, 0), (1, 0), (0, 1), (1, 1)],
+        [(0, 0), (1, 0), (0, 1), (1, 1)]
+    ],
+    'T': [
+        [(0, 0), (-1, 0), (1, 0), (0, 1)],
+        [(0, 0), (0, -1), (0, 1), (1, 0)],
+        [(0, 0), (-1, 0), (1, 0), (0, -1)],
+        [(0, 0), (0, -1), (0, 1), (-1, 0)]
+    ],
+    'S': [
+        [(0, 0), (1, 0), (0, 1), (-1, 1)],
+        [(0, 0), (0, 1), (1, 0), (1, -1)],
+        [(0, 0), (1, 0), (0, 1), (-1, 1)],
+        [(0, 0), (0, 1), (1, 0), (1, -1)]
+    ],
+    'Z': [
+        [(0, 0), (-1, 0), (0, 1), (1, 1)],
+        [(0, 0), (0, -1), (1, 0), (1, 1)],
+        [(0, 0), (-1, 0), (0, 1), (1, 1)],
+        [(0, 0), (0, -1), (1, 0), (1, 1)]
+    ],
+    'J': [
+        [(0, 0), (-1, 0), (-1, 1), (1, 0)],
+        [(0, 0), (0, -1), (0, 1), (1, 1)],
+        [(0, 0), (-1, 0), (1, 0), (1, -1)],
+        [(0, 0), (0, -1), (0, 1), (-1, -1)]
+    ],
+    'L': [
+        [(0, 0), (-1, 0), (1, 0), (1, 1)],
+        [(0, 0), (0, -1), (0, 1), (1, -1)],
+        [(0, 0), (-1, 0), (1, 0), (-1, -1)],
+        [(0, 0), (0, -1), (0, 1), (-1, 1)]
+    ],
+    }
+
+    COLORS = {
+    'I': (0, 255, 255), 'O': (255, 217, 0), 'T': (200, 60, 200),
+    'S': (0, 200, 0),   'Z': (200, 0, 0),   'J': (0, 0, 200),
+    'L': (255, 120, 0),
+    }
+
+    
+    def __init__(self):
+        pass
 
 class Main:
     def __init__(self):
@@ -70,6 +125,13 @@ class Main:
 # playfield_surface = pygame.Surface((cellnumbers_width * 40, cellnumbers_height * 40))
 # centered_rect = playfield_surface.get_rect(center=screen.get_rect().center)
   
+# pygame setup
+pygame.init()
+screen = pygame.display.set_mode((1200, 900))
+pygame.display.set_caption("Python Tetris")
+clock = pygame.time.Clock()
+running = True
+
 main_game = Main()
 
 SCREEN_UPDATE = pygame.USEREVENT

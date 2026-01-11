@@ -1,10 +1,11 @@
 import sys, pygame
 
 class Block:
-    def __init__(self):
+    def __init__(self, grid):
         self.x = 5
         self.y = 2
         self.pos = pygame.Vector2(self.x, self.y)
+        self.grid = grid
         self.locked = False
         
     def draw_block(self, grid):
@@ -15,10 +16,17 @@ class Block:
         # block has to go down each cycle
         if self.locked is False:
             self.pos += direction
-        
+        else:
+            self.grid.update_grid_list(self)
+            self.respawn_block()
+             
     def check_landing(self, grid):
         if self.pos.y == grid.cellnumbers_height - 1:
             self.locked = True
+            
+    def respawn_block(self):
+        self.pos = pygame.Vector2(self.x, self.y)
+        self.locked = False
 
 class Tetromino:
     def __init__(self):
@@ -84,27 +92,48 @@ class Shape:
 
 class Grid:
     def __init__(self):
+        # Initializing grid variables
+        self.grid_list = []
         self.cellsize = 40
         self.cellnumbers_height = 20
         self.cellnumbers_width = 10
         self.padding = 3
 
+        # Initializing grid List
+        print('creating grid list')
+        for row in range(self.cellnumbers_height):
+            self.grid_list.append([])
+            for col in range(self.cellnumbers_width):
+                self.grid_list[row].insert(0,'0')
+        print(self.grid_list)
+        
+        # Drawing Grid
         self.background_color = (30, 105, 166)
-        self.playfield_color = "black"
+        self.grid_line_color = "black"
         self.playfield_surface = pygame.Surface((self.cellnumbers_width * 40 + self.padding, self.cellnumbers_height * 40 + self.padding))
         self.centered_rect = self.playfield_surface.get_rect(center=screen.get_rect().center)
     
+    def update_grid_list(self, block):
+        self.grid_list[int(block.pos.y)][int(block.pos.x)] = 1
+        print(self.grid_list)
+    
     def draw_playfield_grid(self):
-        self.playfield_surface.fill(self.playfield_color)
+        self.playfield_surface.fill(self.grid_line_color)
         for row in range(self.cellnumbers_height):
             for col in range(self.cellnumbers_width):
                 self.grid_rect = pygame.Rect(int(col * self.cellsize + self.padding), int(row * self.cellsize + self.padding), self.cellsize - self.padding, self.cellsize - self.padding)
                 pygame.draw.rect(self.playfield_surface, self.background_color, self.grid_rect)
+        
+        for y,row in enumerate(self.grid_list):
+            for x,cell in enumerate(row):
+                if cell != '0':
+                    self.block_rect = pygame.Rect(int(x * self.cellsize + self.padding / 2), int(y * self.cellsize + self.padding / 2), self.cellsize, self.cellsize)
+                    pygame.draw.rect(self.playfield_surface, "red", self.block_rect)
 
 class Main:
     def __init__(self):
         self.grid = Grid()
-        self.block = Block()
+        self.block = Block(self.grid)
         
     def update(self):
         self.block.check_landing(self.grid)

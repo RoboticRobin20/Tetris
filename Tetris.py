@@ -30,7 +30,7 @@ class Block:
         self.locked = False
 
 class Tetromino:
-    def __init__(self):
+    def __init__(self, grid):
         body = []
 
 class Shape:
@@ -131,6 +131,19 @@ class Grid:
                     self.block_rect = pygame.Rect(int(x * self.cellsize + self.padding / 2), int(y * self.cellsize + self.padding / 2), self.cellsize, self.cellsize)
                     pygame.draw.rect(self.playfield_surface, "red", self.block_rect)
 
+    def get_cellcolors(self):
+        
+        dark_grey = (26, 31, 40)
+        green = (47, 230, 23)
+        red = (232, 18, 18)
+        orange = (226, 116, 17)
+        yellow = (237, 234, 4)
+        purple = (166, 0, 247)
+        cyan = (21, 204, 209)
+        blue = (13, 64, 216)
+        
+        return [dark_grey, green, red, orange, yellow, purple, cyan, blue]
+        
 class Main:
     def __init__(self):
         self.grid = Grid()
